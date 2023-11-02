@@ -13,6 +13,7 @@ import clear_
 import requests as rq
 import json
 from random import randint
+from time import sleep
 
 p = 0
 
@@ -260,11 +261,13 @@ def page1():
         st.session_state.dt_now1 = None
 
     # Get_Matches ===========================================================
+    Get_Matches = False
 
     Get_Matches = st.button("Get_Matches")
     if Get_Matches:
         try:
             match_.refresh_game()
+            # sleep(5)
             is_accepted = [0 for _ in range(201)]
             print("\n// Get_Matches ==================")
             st.session_state.dt_now1 = datetime.now()
@@ -282,7 +285,7 @@ def page1():
             vis.main()
             print("\n   Get_Matches ==================//")
         except:
-            raise()
+            None
 
     # Input / Output ========================================================
     st.markdown(f"""
@@ -297,66 +300,6 @@ def page1():
 
     st.write("Status   :", st.session_state.status_code1, st.session_state.dt_now1)
     st.write("Raw      :", st.session_state.res1)
-
-
-def page2():
-    st.title("Get_Matching")
-
-    # Init ==================================================================
-
-    if "res2" not in st.session_state:
-        st.session_state.res2 = None
-
-    if "res_fmt2" not in st.session_state:
-        st.session_state.res_fmt2 = None 
-
-    if "status_code2" not in st.session_state:
-        st.session_state.status_code2 = None
-
-    if "dt_now2" not in st.session_state:
-        st.session_state.dt_now2 = None
-
-    # Get_Matching ==========================================================
-
-    Get_Matching = st.button("Get_Matchng")
-    if Get_Matching:
-        print("\n// Get_Matching ==================")
-        st.session_state.dt_now2 = datetime.now()
-        try:
-            st.session_state.res2, st.session_state.status_code2 = get_matching(st.session_state.ID)
-            st.session_state.res_fmt2 = simple_get_matching(st.session_state.res2)
-            st.session_state.is_first = st.session_state.res2["first"]
-            st.session_state.size = st.session_state.res2["board"]["width"]
-            st.session_state.mason = st.session_state.res2["board"]["mason"]
-            st.session_state.turnSeconds = st.session_state.res2["turnSeconds"]
-            st.session_state.opponent = st.session_state.res2["opponent"]
-            st.session_state.turns = st.session_state.res2["turns"]
-        except:
-            st.session_state.status_code2 = 400
-            st.session_state.res2 = {
-                "operation Get_Matching" : {
-                    "params" : 'id', 
-                    "error" : "field required"
-                }
-            }
-            st.session_state.res_fmt2 = None
-
-        print("\n   Get_Matching ==================//")
-    # Input / Output ========================================================
-
-    st.text_input("ID", key="ID")
-
-    st.write("Status :", st.session_state.status_code2, st.session_state.dt_now2)
-    st.markdown(f"""
-                ## First : {st.session_state.is_first}
-                ## Size  : {st.session_state.size}
-                ## Mason : {st.session_state.mason}
-                ## turnSeconds : {st.session_state.turnSeconds}
-                ## Opponent : {st.session_state.opponent}
-                ## Turns : {st.session_state.turns}
-                """)
-    # st.write("Raw :  ", st.session_state.res2)
-    # st.write("Simple : ", st.session_state.res2["logs"])
 
 def page4():
     st.title("Visualizer")
@@ -420,7 +363,6 @@ def page4():
                             # self.vis_wall_territories = Image.open("./img/None.png")
                 # print("\n   Visualizer ==================//")
                 
-    st.text_input("ID", key="ID")
     Switch_Auto_Reload = st.button("Auto Reload")
     if Switch_Auto_Reload:
         print("Auto Reload", st.session_state.Autoreload_4,"->",not st.session_state.Autoreload_4)
@@ -439,11 +381,15 @@ def page4():
             except:
                 None
 
+
     # st.write("Auto Reload is ", st.session_state.Autoreload_4)
 
 
     # Input / Output ========================================================
 
+    st.markdown(f"""
+                ## ID : {st.session_state.ID}
+                """)
 
     # worker の状態を表示する部分
     if worker is None:
@@ -463,148 +409,8 @@ def page4():
                         ## Turn : {st.session_state.turn_now} / {st.session_state.turns}
                         ## Score : {worker.scoreA} vs {worker.scoreB}
             """)
-            time.sleep(.3)
+            time.sleep(.1)
 
-def page7():
-    # global is_accepted
-    st.title("Run_Queue")
-
-    global is_accepted
-    R = st.button("Reflesh accepted")
-    if R:
-        is_accepted = [0 for _ in range(201)]
-        print(is_accepted)
-
-    # Init ==================================================================
-    if 'runner' not in st.session_state:
-        st.session_state.runner = None
-    runner = st.session_state.runner
-
-    if "Autoreload_run" not in st.session_state:
-        st.session_state.Autoreload_run = False
-
-    class Runner(threading.Thread):
-        def __init__(self, **kwargs):
-            super().__init__(**kwargs)
-            self.ID = st.session_state.ID
-            self.posted = None
-            self.status_code7 = None
-            self.mason = st.session_state.mason
-            self.res7 = None
-            self.status_code_get = None
-            self.turn_now = None
-            self.latest_turn = -1
-            self.is_first = None
-            self.res_get = None
-            self.queue = None
-            self.dt_now7 = None
-            self.should_stop = threading.Event()
-
-        def run(self):
-            while not self.should_stop.wait(0):
-                try:
-                    # print(datetime.now())
-                    time.sleep(0.5)
-                    print("\n //Auto Posting ===========================")
-                    f = open("./Plan/run.txt", "r")
-                    try:
-                        Actions_Arr = eval(f.read())
-                    except:
-                        Actions_Arr = [[] for _ in range(self.mason)]
-                        
-                    f.close()
-                    Send_Arr = [[] for _ in range(self.mason)]
-                    print(Actions_Arr)
-                    self.queue = Actions_Arr
-
-                    for i in range(self.mason):
-                        if len(Actions_Arr[i]) > 0:
-                            Send_Arr[i] = id2action[Actions_Arr[i][0]]
-                        else:
-                            print("RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR")
-                            legal_actions = lib.random_move()
-                            Send_Arr[i] = legal_actions[i][randint(0,len(legal_actions[i])-1)]
-                    print(Send_Arr)
-                    self.res_get, self.status_code_get = get_matching(self.ID)
-                    self.turn_now = self.res_get["turn"]
-                    if self.latest_turn != self.turn_now:
-                        print("FGO")
-                        try:
-                            clear_.run()
-                            simple_shortest.run()
-                            simple_make_around.run()
-                            print("ALLLLLLLLLLLLLLLLLLGGGGGGGGGGOOOOOOOOO\n\n\n\n\n\n")
-                        except:
-                            None
-                        self.latest_turn = self.turn_now
-                    self.is_first = self.res_get["first"]
-                    if (self.turn_now + self.is_first) % 2:
-                        print("POST")
-
-                        if not is_accepted[self.turn_now]:
-                            f = open("./Plan/run.txt", "w")
-                            Arr_ = [[]for _ in range(self.mason)]
-                            for i in range(self.mason):
-                                Arr_[i] = Actions_Arr[i][1:]
-                            f.write(str(Arr_))
-                            f.close()
-                            print("SEND!!!!!!!!!!")
-                            self.posted, self.res7, self.status_code7 = post_actions(self.ID, 
-                                                                                    self.turn_now + 1, 
-                                                                                    str(Send_Arr))
-                            if self.status_code7 == 200:
-                                print("200")
-                                self.dt_now7 = datetime.now()
-                                is_accepted[self.turn_now] = 1
-
-                except:
-                    None
-
-    st.markdown(f"""
-                ## ID : {st.session_state.ID}
-                """)
-
-    st.text_input("ID", key = "ID")
-
-    Switch_Auto_Pop = st.button("Switch Auto Pop")
-    if Switch_Auto_Pop:
-        print("Auto Pop", st.session_state.Autoreload_run,"->",not st.session_state.Autoreload_run)
-        st.session_state.Autoreload_run = not st.session_state.Autoreload_run
-        if st.session_state.Autoreload_run:
-            runner = st.session_state.runner = Runner(daemon=True)
-            runner.start()
-            st.experimental_rerun()
-        else:
-            try:
-                runner.should_stop.set()
-                # 終了まで待つ
-                runner.join()
-                runner = st.session_state.runner = None
-                st.experimental_rerun()
-            except:
-                None
-
-    # st.write("Auto Pop is ", st.session_state.Autoreload_run)
-
-    # Input / Output ========================================================
-
-    # runner の状態を表示する部分
-    if runner is None:
-        st.markdown('No runner running.')
-    else:
-        st.markdown(f'runner: {runner.getName()}')
-        placeholder7_1 = st.empty()
-        # placeholder7_2 = st.empty()
-        while runner.is_alive():
-            placeholder7_1.markdown(f"""
-                        ## Mason : {runner.mason}
-                        ## Status Code : {runner.status_code7}
-                        ## Accepted Time : {runner.dt_now7}
-                        ## Turn : {runner.turn_now} / {st.session_state.turns}
-                        ## Posted : {runner.posted}
-                        ## QUEUE  : {runner.queue}
-            """)
-            time.sleep(.3)
 
 id2action =  [[1,1],
               [1,2],
@@ -629,9 +435,7 @@ id2action =  [[1,1],
 
 pages = dict(
     page1="Get_Matches",
-    page2="Get_Matching",
     page4="Visualizer",
-    page7="Run_Queue",
 )
 
 # 選択肢を縦に表示
@@ -639,9 +443,7 @@ page_id = st.sidebar.radio(
     "Change",
     [
         "page1",
-        "page2",
         "page4",
-        "page7",
     ],
     format_func=lambda page_id: pages[page_id],
 )
@@ -649,9 +451,5 @@ page_id = st.sidebar.radio(
 # 選択に応じてページを表示
 if page_id == "page1":
     page1()
-elif page_id == "page2":
-    page2()
 elif page_id == "page4":
     page4()
-elif page_id == "page7":
-    page7()
