@@ -321,26 +321,33 @@ def random_move():
         m_ = open("./Field_Data/Field_Masons.txt","r")
         s_ = open("./Field_Data/Field_Structures.txt","r")
         w_ = open("./Field_Data/Field_Walls.txt","r")
+        m = eval(m_.read())
         s = eval(s_.read())
         w = eval(w_.read())
-        m = eval(m_.read())
+        m_.close()
+        s_.close()
+        w_.close()
         H = W = len(s)
         return legal_actions(m,s,w,H,W)
     except:
         None
 
 def calculate():
-    try:
+    # try:
+    if 1:
         s_ = open("./Field_Data/Field_Structures.txt","r")
         w_ = open("./Field_Data/Field_Walls.txt","r")
         t_ = open("./Field_Data/Field_Territories.txt","r")
         s = eval(s_.read())
         w = eval(w_.read())
         t = eval(t_.read())
+        s_.close()
+        w_.close()
+        t_.close()
         H = W = len(s)
         return calc(s, w, t, H, W)
-    except:
-        None
+    # except:
+    #     None
 
 
 def convert(m,s,w,t,Bool):
@@ -358,17 +365,18 @@ def convert(m,s,w,t,Bool):
         #     w = rev_Walls(w)
         #     t = rev_Territories(t)
 
+        s_.write(str(s))
+        s_.close()
+
+        t_.write(str(t))
+        t_.close()
+
         m_.write(str(m))
         m_.close()
 
         w_.write(str(w))
         w_.close()
 
-        s_.write(str(s))
-        s_.close()
-
-        t_.write(str(t))
-        t_.close()
         # print("converted!")
         # return legal_actions(m,s,w,H,W)
         # return greedy_actions(m,s,w,H,W)
@@ -392,11 +400,17 @@ def convert_before_match(m,s):
         m_.write(str(m))
         s_.write(str(s))
 
+        # print("mason")
+        # print(m)
+        # print("Structures")
+        # print(s)
+
 
         m_.close()
         s_.close()
 
         print("BEFORE MATCH")
+        return
         # return legal_actions(m,s,w,H,W)
         # return greedy_actions(m,s,w,H,W)
     # except:

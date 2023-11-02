@@ -174,47 +174,53 @@ def captureField_all(W, H, WS, field, field2, field3, fileName, plan_move_arr,pl
 def main():
     # print("Image_Generating...", end = "     ")
     fieldPath = "./Field_Data/Field_Structures.txt"
-    fieldPath2 = "./Field_Data/Field_Masons.txt"
     f = open(fieldPath,"r")
     field = eval(f.read())
+    f.close()
+
+    fieldPath2 = "./Field_Data/Field_Masons.txt"
     f2 = open(fieldPath2,"r")
     field2 = eval(f2.read())
-    pygame.init()
+    f2.close()
+
     W = len(field[0])
     H = len(field)
+
+    pygame.init()
     WS = pygame.display.set_mode((CELL_SIZE * W, CELL_SIZE * H))
     captureField_struct(W, H, WS, field, field2, 
                         fileName="./Field_Data/visualized_struct_masons.png")
 
     fieldPath3 = "./Field_Data/Field_Walls.txt"
-    fieldPath4 = "./Field_Data/Field_Territories.txt"
     f3 = open(fieldPath3,"r")
     field3 = eval(f3.read())
+    f3.close()
+
+    fieldPath4 = "./Field_Data/Field_Territories.txt"
     f4 = open(fieldPath4,"r")
     field4 = eval(f4.read())
-    pygame.init()
-    WS = pygame.display.set_mode((CELL_SIZE * W, CELL_SIZE * H))
+    f4.close()
+
+    # pygame.init()
+    # WS = pygame.display.set_mode((CELL_SIZE * W, CELL_SIZE * H))
     captureField_area(W, H, WS, field2, field3, field4, 
                       fileName="./Field_Data/visualized_wall_territories.png")
-    pygame.init()
-    WS = pygame.display.set_mode((CELL_SIZE * W, CELL_SIZE * H))
 
-
+    # pygame.init()
+    # WS = pygame.display.set_mode((CELL_SIZE * W, CELL_SIZE * H))
 
     # READ PLAN
     plan_move = open("./Plan/Move.txt", "r")
-    plan_build = open("./Plan/Build.txt", "r")
-    # plan_make_around = open("./Plan/make_around.txt", "r")
-
     plan_move_Arr = eval(plan_move.read())
-    plan_build_Arr = eval(plan_build.read())
-    # plan_make_around_Arr = eval(plan_make_around.read())
-
     plan_move.close()
+
+    plan_build = open("./Plan/Build.txt", "r")
+    plan_build_Arr = eval(plan_build.read())
     plan_build.close()
+
+    # plan_make_around = open("./Plan/make_around.txt", "r")
+    # plan_make_around_Arr = eval(plan_make_around.read())
     # plan_make_around.close()
     captureField_all(W, H, WS, field, field2, field3, 
                       fileName="./Field_Data/visualized_all.png",plan_move_arr=plan_move_Arr,plan_build_arr=plan_build_Arr)
-    # print("Finished", end = "")
-# main()
 

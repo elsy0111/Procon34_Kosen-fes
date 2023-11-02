@@ -10,9 +10,9 @@ from pygame.locals import *
 H = 11
 masons = 2
 
-screen_width = 1400
-screen_height = 1100
-image_size = (1000,1000)
+screen_width = 1200
+screen_height = 900
+image_size = (850,850)
 dots = image_size[0] / H
 
 #initial =====================================================
@@ -20,31 +20,37 @@ pygame.init()
 pygame.display.set_caption("Transparent Button Example")
 screen = pygame.display.set_mode((screen_width, screen_height))
 
-font = pygame.font.SysFont("Serif", 50)
-fontL = pygame.font.SysFont("Serif", 70)
+font = pygame.font.SysFont("Serif", 40)
+fontL = pygame.font.SysFont("Serif", 50)
 
 init_Arr = [[0 for _ in range(H)] for _ in range(H)]
 f = open("./Plan/Move.txt", "w")
 f.write(str(init_Arr))
 f.close()
+
 f = open("./Plan/Build.txt", "w")
 f.write(str(init_Arr))
 f.close()
+
 f = open("./Plan/make_around.txt", "w")
 f.write(str(init_Arr))
 f.close()
 
-button_clear = (1100, 50,400,70)
-button_fp  =   ( 1000,130,400,70)
-button_fp0 =   (1100,210,400,70)
-button_fp1 =   (1100,290,400,70)
-button_fp2 =   (1100,370,400,70)
-button_ac  =   ( 1000,450,400,70)
-button_ac1 =   (1100,530,400,70)
-button_ac2 =   (1100,610,400,70)
+button_clear = (930, 50,230,60)
+
+button_fp  =   (890,120,230,60)
+
+button_fp0 =   (930,190,230,60)
+button_fp1 =   (930,260,230,60)
+button_fp2 =   (930,330,230,60)
+
+button_ac  =   (890,400,230,60)
+button_ac1 =   (930,470,230,60)
+button_ac2 =   (930,540,230,60)
 # button_ac3 =   (1100,690,400,70)
-button_Run =   (1050,800,300,100)
-button_aac =   (0,1000,400,70)
+button_Run =   (950,650,260,60)
+button_aac =   (   0,850,260,60)
+button_re =    (500,850,260,60)
 
 rect_clear = pygame.Rect(*button_clear)
 txt_clear = font.render("Clear", True, (0, 0, 0))
@@ -77,10 +83,12 @@ txt_Run = fontL.render("Run", True, (0, 0, 0))
 rect_aac = pygame.Rect(*button_aac)
 txt_aac = font.render("ALL_Clear", True, (0, 0, 0))
 
+rect_re = pygame.Rect(*button_re)
+txt_re = font.render("New_Match", True, (0, 0, 0))
 
 #func ========================================================
 def click_field(p):
-    return 0 <= p[0] < 1000 and 0 <= p[1] < 1000
+    return 0 <= p[0] < image_size[0] and 0 <= p[1] < image_size[0]
 
 def click_clear(p):
     return button_clear[0] <= p[0] < button_clear[0] + button_clear[2] and button_clear[1] <= p[1] < button_clear[1] + button_clear[3]
@@ -149,11 +157,11 @@ while running:
     screen.blit(txt_fp2, (button_fp2[0], button_fp2[1] + 5))
 
     if fill_pattern == 0:
-        screen.blit(choice_image, (button_fp0[0] - 60, button_fp0[1] + 5))
+        screen.blit(choice_image, (button_fp0[0] - 60, button_fp0[1] + 3))
     elif fill_pattern == 1:
-        screen.blit(choice_image, (button_fp1[0] - 60, button_fp1[1] + 5))
+        screen.blit(choice_image, (button_fp1[0] - 60, button_fp1[1] + 3))
     elif fill_pattern == 2:
-        screen.blit(choice_image, (button_fp2[0] - 60, button_fp2[1] + 5))
+        screen.blit(choice_image, (button_fp2[0] - 60, button_fp2[1] + 3))
 
     screen.blit(txt_ac, (button_ac[0], button_ac[1] + 5))
 
@@ -165,15 +173,18 @@ while running:
     # screen.blit(txt_ac3, (button_ac3[0], button_ac3[1] + 5))
 
     pygame.draw.rect(screen, (255, 0, 0), rect_Run)
-    screen.blit(txt_Run, (button_Run[0] + 90, button_Run[1] + 8))
+    screen.blit(txt_Run, (button_Run[0] + 90, button_Run[1] + 4))
 
     pygame.draw.rect(screen, (255, 0, 0), rect_aac)
-    screen.blit(txt_aac, (button_aac[0] + 90, button_aac[1] + 8))
+    screen.blit(txt_aac, (button_aac[0] + 40, button_aac[1] + 4))
+
+    pygame.draw.rect(screen, (255, 0, 0), rect_re)
+    screen.blit(txt_re, (button_re[0] + 40, button_re[1] + 4))
 
     if Actions_pattern == 1:
-        screen.blit(choice_image, (button_ac1[0] - 60, button_ac1[1] + 5))
+        screen.blit(choice_image, (button_ac1[0] - 60, button_ac1[1] + 3))
     elif Actions_pattern == 2:
-        screen.blit(choice_image, (button_ac2[0] - 60, button_ac2[1] + 5))
+        screen.blit(choice_image, (button_ac2[0] - 60, button_ac2[1] + 3))
     # elif Actions_pattern == 3:
         # screen.blit(choice_image, (button_ac3[0] - 60, button_ac3[1] + 5))
 
@@ -325,21 +336,6 @@ while running:
                     f.close()
                     
                     Selected_Rect = []
-                    
-                    # simple_shortest.run()
-
-                    # random_action_.run()
-                    # subprocess.run(["a.exe", ">", "Plan/run.txt"], shell = True)
-
-                    # f = open("./Plan/Move.txt", "w")
-                    # f.write(str(init_Arr))
-                    # f.close()
-                    # f = open("./Plan/Build.txt", "w")
-                    # f.write(str(init_Arr))
-                    # f.close()
-                    # f = open("./Plan/make_around.txt", "w")
-                    # f.write(str(init_Arr))
-                    # f.close()
 
         else:
             None

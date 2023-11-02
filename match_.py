@@ -14,5 +14,5 @@ def refresh_game():
         subprocess.call(kill_process)
         subprocess.call(run_process, shell = True)
 
-refresh_game()
+# refresh_game()
 # subprocess.call(run_process)

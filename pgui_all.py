@@ -209,92 +209,29 @@ def simple_get_matching(res : json):
 
     return Res
 
-# Init (Global) =============================================================
+#=====================================================
+    st.session_state.Autoreload_4 = False
+    match_.refresh_game()
+    # sleep(5)
+    is_accepted = [0 for _ in range(201)]
+    print("\n// Get_Matches ==================")
+    st.session_state.dt_now1 = datetime.now()
+    st.session_state.res1, st.session_state.status_code1 = get_matches()
 
-if "ID" not in st.session_state:
-    # int
-    st.session_state.ID = None
+    st.session_state.is_first = st.session_state.res1[p]["first"]
+    st.session_state.size = st.session_state.res1[p]["board"]["width"]
+    st.session_state.mason = st.session_state.res1[p]["board"]["mason"]
+    st.session_state.turnSeconds = st.session_state.res1[p]["turnSeconds"]
+    st.session_state.opponent = st.session_state.res1[p]["opponent"]
+    st.session_state.turns = st.session_state.res1[p]["turns"]
+    st.session_state.ID = st.session_state.res1[p]["id"]
 
-if "is_first" not in st.session_state:
-    # bool
-    st.session_state.is_first = None
-
-if "size" not in st.session_state:
-    # int
-    st.session_state.size = None
-
-if "mason" not in st.session_state:
-    #int
-    st.session_state.mason = None
-
-if "opponent" not in st.session_state:
-    # string
-    st.session_state.opponent = None
-
-if "turns" not in st.session_state:
-    # int
-    st.session_state.turns = None
-
-if "turnSeconds" not in st.session_state:
-    # int
-    st.session_state.turnSeconds = None
-
-if "turn_now" not in st.session_state:
-    #int
-    st.session_state.turn_now = None
-
-def page1():
-    global is_accepted
-    st.title("GET_Matches")
-
-    # Init ==================================================================
-
-    if "res1" not in st.session_state:
-        st.session_state.res1 = None
-
-    if "status_code1" not in st.session_state:
-        st.session_state.status_code1 = None
-
-    if "dt_now1" not in st.session_state:
-        st.session_state.dt_now1 = None
-
-
-    if 'worker' not in st.session_state:
-        st.session_state.worker = None
-    worker = st.session_state.worker
-
-    if "Autoreload_4" not in st.session_state:
-        st.session_state.Autoreload_4 = False
-
-    # Get_Matches ===========================================================
-    Get_Matches = False
-
-    Get_Matches = st.button("Get_Matches")
-    if Get_Matches:
-        # try:
-        if 1:
-            st.session_state.Autoreload_4 = False
-            match_.refresh_game()
-            # sleep(5)
-            is_accepted = [0 for _ in range(201)]
-            print("\n// Get_Matches ==================")
-            st.session_state.dt_now1 = datetime.now()
-            st.session_state.res1, st.session_state.status_code1 = get_matches()
-
-            st.session_state.is_first = st.session_state.res1[p]["first"]
-            st.session_state.size = st.session_state.res1[p]["board"]["width"]
-            st.session_state.mason = st.session_state.res1[p]["board"]["mason"]
-            st.session_state.turnSeconds = st.session_state.res1[p]["turnSeconds"]
-            st.session_state.opponent = st.session_state.res1[p]["opponent"]
-            st.session_state.turns = st.session_state.res1[p]["turns"]
-            st.session_state.ID = st.session_state.res1[p]["id"]
-
-            lib.convert_before_match(st.session_state.res1[p]["board"]["masons"], st.session_state.res1[p]["board"]["structures"])
-            vis.main()
-            print("\n   Get_Matches ==================//")
-            st.session_state.Autoreload_4 = True
-        # except:
-        #     None
+    lib.convert_before_match(st.session_state.res1[p]["board"]["masons"], st.session_state.res1[p]["board"]["structures"])
+    vis.main()
+    print("\n   Get_Matches ==================//")
+    st.session_state.Autoreload_4 = True
+# except:
+#     None
 
     # st.markdown(f"""
     #             ## ID : {st.session_state.ID}
